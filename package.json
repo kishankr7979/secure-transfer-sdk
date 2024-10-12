@@ -2,11 +2,16 @@
   "name": "secure-transfer-sdk",
   "version": "1.0.1",
   "description": "A secure transfer SDK for JavaScript",
-  "main": "dist/index.js",
+  "main": "dist",
   "type": "module",
+  "module": "dist",
+  "exports": {
+    "import": "dist/index.js",
+    "require": "dist/index.js"
+  },
   "scripts": {
     "test": "jest",
-    "build": "babel src --out-dir dist",
+    "build": "babel src -d dist && babel src -d dist --out-file-extension .cjs",
     "prepublishOnly": "npm run build"
   },
   "author": "Kishan Kumar",

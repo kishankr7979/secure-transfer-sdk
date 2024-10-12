@@ -1,6 +1,2 @@
-import SecureTransferSDK from "./secure-transfer.js";
-import generatePublicAndPrivateKey from "./generate-secure-key.js";
-export {
-  SecureTransferSDK,
-  generatePublicAndPrivateKey,
-}
+export { default as SecureTransferSDK } from "./secure-transfer.js";
+export { default as generatePublicAndPrivateKey } from "./generate-secure-key.js";
