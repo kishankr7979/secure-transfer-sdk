@@ -1,4 +1,4 @@
-import { SecureTransferSDK } from '../src/index';
+import { SecureTransferSDK } from '../src';
 import crypto from 'crypto';
 
 describe('SecureTransferSDK', () => {
