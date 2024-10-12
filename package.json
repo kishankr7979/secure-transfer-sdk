@@ -1,21 +1,22 @@
 {
   "name": "secure-transfer-sdk",
-  "version": "1.0.1",
+  "version": "1.0.6",
   "description": "A secure transfer SDK for JavaScript",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
     "test": "jest",
-    "build": "babel src --out-dir dist",
+    "build": "tsc",
     "prepublishOnly": "npm run build"
   },
   "author": "Kishan Kumar",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.14.5",
-    "@babel/core": "^7.14.6",
-    "@babel/preset-env": "^7.14.7",
-    "babel-jest": "^27.0.6",
-    "jest": "^27.0.6"
+    "@types/jest": "^27.0.3",
+    "@types/node": "^16.11.12",
+    "jest": "^27.4.5",
+    "ts-jest": "^27.1.2",
+    "typescript": "^4.5.4"
   }
 }
