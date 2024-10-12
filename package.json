@@ -1,6 +1,6 @@
 {
   "name": "secure-transfer-sdk",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A secure transfer SDK for JavaScript",
   "main": "dist",
   "type": "module",
