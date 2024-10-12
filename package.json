@@ -1,6 +1,6 @@
 {
   "name": "secure-transfer-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A secure transfer SDK for JavaScript",
   "main": "dist/index.js",
   "type": "module",
@@ -10,7 +10,7 @@
     "prepublishOnly": "npm run build"
   },
   "author": "Kishan Kumar",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.14.5",
     "@babel/core": "^7.14.6",

@@ -21,7 +21,7 @@ npm install secure-transfer-sdk
 ## Usage
 
 ```
-import SecureTransferSDK from 'secure-transfer-sdk';
+import { SecureTransferSDK, generateSecureKey } from 'secure-transfer-sdk';
 ```
 
 
@@ -65,7 +65,7 @@ Please ensure your code adheres to the existing style and passes all tests.
 
 This project is licensed under the ISC License.
 
-Copyright (c) 2023 Kishan Kumar
+Copyright (c) 2024 Kishan Kumar
 
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
 
