@@ -1,6 +1,6 @@
 {
   "name": "secure-transfer-sdk",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A secure transfer SDK for JavaScript",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -10,6 +10,9 @@
       "require": "./dist/index.cjs"
     }
   },
+   "files": [
+    "dist"
+  ],
   "type": "module",
   "scripts": {
     "test": "jest",
