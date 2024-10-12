@@ -1,4 +1,4 @@
-import { SecureTransferSDK } from '../src';
+import { SecureTransfer } from '../src';
 import crypto from 'crypto';
 
 describe('SecureTransferSDK', () => {
@@ -19,8 +19,8 @@ describe('SecureTransferSDK', () => {
   });
 
   beforeEach(() => {
-    clientSDK = new SecureTransferSDK({ key: publicKey });
-    serverSDK = new SecureTransferSDK({ key: privateKey, isServer: true });
+    clientSDK = new SecureTransfer({ key: publicKey });
+    serverSDK = new SecureTransfer({ key: privateKey, isServer: true });
   });
 
   test('generateSessionKey method (client-side)', () => {
@@ -62,7 +62,7 @@ describe('SecureTransferSDK', () => {
 
   test('constructor throws error when key is missing', () => {
     expect(() => {
-      new SecureTransferSDK({});
+      new SecureTransfer({});
     }).toThrow('Missing required configuration option: key');
   });
 
