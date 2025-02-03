@@ -24,7 +24,7 @@ describe('SecureTransferSDK', () => {
   });
 
   test('generateSessionKey method (client-side)', () => {
-    const { encryptedSessionKey, plainSessionKey } = clientSDK.generateSessionKey();
+    const { encryptedSessionKey, plainSessionKey } = clientSDK.generateSessionKey('1atest2');
     expect(encryptedSessionKey).toBeDefined();
     expect(plainSessionKey).toBeDefined();
     expect(typeof encryptedSessionKey).toBe('string');
@@ -33,7 +33,7 @@ describe('SecureTransferSDK', () => {
 
   test('validateSessionKey method (server-side)', () => {
     const { encryptedSessionKey, plainSessionKey } = clientSDK.generateSessionKey();
-    const validatedSessionKey = serverSDK.validateSessionKey(encryptedSessionKey);
+    const validatedSessionKey = serverSDK.validateSessionKey(encryptedSessionKey, '1atest2');
     expect(validatedSessionKey).toBe(plainSessionKey);
   });
 
