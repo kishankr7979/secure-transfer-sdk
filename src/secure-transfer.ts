@@ -23,20 +23,20 @@ class SecureTransferSDK {
     this.isServer = !!config.isServer;
   }
 
-  generateSessionKey(signature: string): { encryptedSessionKey: string; plainSessionKey: string } {
+  generateSessionKey(): { encryptedSessionKey: string; plainSessionKey: string } {
     if (this.isServer) {
       throw new Error('Session key generation is only available on the client side');
     }
 
     try {
       const sessionKey = crypto.randomBytes(32);
-      const sessionKeyWithSignature = sessionKey + signature;
       const encryptedSessionKey = crypto.publicEncrypt(
         {
           key: this.config.key,
           padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+          oaepHash: 'sha256',
         },
-        Buffer.from(sessionKeyWithSignature, 'hex')
+        sessionKey
       );
 
       return {
@@ -49,7 +49,7 @@ class SecureTransferSDK {
     }
   }
 
-  validateSessionKey(encryptedSessionKey: string, signature: string): string {
+  validateSessionKey(encryptedSessionKey: string): string {
     if (!this.isServer) {
       throw new Error('Session key validation is only available on the server side');
     }
@@ -59,16 +59,12 @@ class SecureTransferSDK {
         {
           key: this.config.key,
           padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+          oaepHash: 'sha256',
         },
         Buffer.from(encryptedSessionKey, 'base64')
       );
 
-      const sessionKey = decryptedSessionKey.toString('hex');
-      if(!sessionKey.endsWith(signature)) {
-        throw new Error('Invalid session key');
-      }
-      return sessionKey.slice(0, signature.length);
-      
+      return decryptedSessionKey.toString('hex');
     } catch (error) {
       console.error('Error validating session key:', error);
       throw new Error('Failed to validate session key');
