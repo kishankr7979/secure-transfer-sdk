@@ -23,60 +23,65 @@ class SecureTransferSDK {
     this.isServer = !!config.isServer;
   }
 
-  generateSessionKey(): { encryptedSessionKey: string; plainSessionKey: string } {
+  generateSessionKey(signature: string): { encryptedSessionKey: string; plainSessionKey: string } {
     if (this.isServer) {
       throw new Error('Session key generation is only available on the client side');
     }
-
+  
     try {
-      const sessionKey = crypto.randomBytes(32);
+      const sessionKey = crypto.randomBytes(32).toString('hex');
+      const sessionKeyWithSignature = sessionKey + signature; 
+  
       const encryptedSessionKey = crypto.publicEncrypt(
         {
           key: this.config.key,
           padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
-          oaepHash: 'sha256',
         },
-        sessionKey
+        Buffer.from(sessionKeyWithSignature, 'utf-8') // Use utf-8 encoding
       );
-
+  
       return {
         encryptedSessionKey: encryptedSessionKey.toString('base64'),
-        plainSessionKey: sessionKey.toString('hex')
+        plainSessionKey: sessionKey, // Keep as hex string
       };
     } catch (error) {
       console.error('Error generating session key:', error);
       throw new Error('Failed to generate session key');
     }
   }
+  
 
-  validateSessionKey(encryptedSessionKey: string): string {
+  validateSessionKey(encryptedSessionKey: string, signature: string): string {
     if (!this.isServer) {
       throw new Error('Session key validation is only available on the server side');
     }
-
+  
     try {
-      const decryptedSessionKey = crypto.privateDecrypt(
+      const decryptedSessionKeyWithSignature = crypto.privateDecrypt(
         {
           key: this.config.key,
           padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
-          oaepHash: 'sha256',
         },
         Buffer.from(encryptedSessionKey, 'base64')
-      );
-
-      return decryptedSessionKey.toString('hex');
+      ).toString('utf-8');
+  
+      if (!decryptedSessionKeyWithSignature.endsWith(signature)) {
+        throw new Error('Failed to validate session key');
+      }
+  
+      // Extract and return only the session key (without the signature)
+      return decryptedSessionKeyWithSignature.replace(signature, '');
     } catch (error) {
       console.error('Error validating session key:', error);
       throw new Error('Failed to validate session key');
     }
   }
+  
 
   encrypt(data: string): string {
     try {
-      // Generate a random AES key
       const aesKey = crypto.randomBytes(32);
 
-      // Encrypt the AES key with RSA
       const encryptedAesKey = crypto.publicEncrypt(
         {
           key: this.config.key,

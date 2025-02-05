@@ -1,11 +1,13 @@
 import { SecureTransferSDK } from '../src';
 import crypto from 'crypto';
+import { log } from 'console';
 
 describe('SecureTransferSDK', () => {
   let clientSDK;
   let serverSDK;
   let publicKey;
   let privateKey;
+  let signature;
 
   beforeAll(() => {
     // Generate a key pair for testing
@@ -16,6 +18,7 @@ describe('SecureTransferSDK', () => {
     });
     publicKey = pubKey;
     privateKey = privKey;
+    signature = 'hello';
   });
 
   beforeEach(() => {
@@ -24,7 +27,7 @@ describe('SecureTransferSDK', () => {
   });
 
   test('generateSessionKey method (client-side)', () => {
-    const { encryptedSessionKey, plainSessionKey } = clientSDK.generateSessionKey();
+    const { encryptedSessionKey, plainSessionKey } = clientSDK.generateSessionKey(signature);
     expect(encryptedSessionKey).toBeDefined();
     expect(plainSessionKey).toBeDefined();
     expect(typeof encryptedSessionKey).toBe('string');
@@ -32,8 +35,9 @@ describe('SecureTransferSDK', () => {
   });
 
   test('validateSessionKey method (server-side)', () => {
-    const { encryptedSessionKey, plainSessionKey } = clientSDK.generateSessionKey();
-    const validatedSessionKey = serverSDK.validateSessionKey(encryptedSessionKey);
+    const { encryptedSessionKey, plainSessionKey } = clientSDK.generateSessionKey(signature);
+    const validatedSessionKey = serverSDK.validateSessionKey(encryptedSessionKey, signature);
+    log({validatedSessionKey, plainSessionKey, signature})
     expect(validatedSessionKey).toBe(plainSessionKey);
   });
 
