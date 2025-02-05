@@ -30,20 +30,16 @@ class SecureTransferSDK {
   
     try {
       const sessionKey = crypto.randomBytes(32).toString('hex');
-      const sessionKeyWithSignature = sessionKey + signature; 
-  
+      const combinedData = `${sessionKey}:${signature}`;
       const encryptedSessionKey = crypto.publicEncrypt(
         {
           key: this.config.key,
           padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
         },
-        Buffer.from(sessionKeyWithSignature, 'utf-8') // Use utf-8 encoding
-      );
-  
-      return {
-        encryptedSessionKey: encryptedSessionKey.toString('base64'),
-        plainSessionKey: sessionKey, // Keep as hex string
-      };
+        Buffer.from(combinedData, 'utf-8')
+      ).toString('base64');
+    
+      return { encryptedSessionKey, plainSessionKey: sessionKey };
     } catch (error) {
       console.error('Error generating session key:', error);
       throw new Error('Failed to generate session key');
@@ -51,26 +47,38 @@ class SecureTransferSDK {
   }
   
 
-  validateSessionKey(encryptedSessionKey: string, signature: string): string {
+  validateSessionKey(encryptedSessionKey: string, expectedSignature: string): string {
     if (!this.isServer) {
       throw new Error('Session key validation is only available on the server side');
     }
-  
+
+    const encryptedBuffer = Buffer.from(encryptedSessionKey, 'base64');
+
+    if (encryptedBuffer.length !== 256) {
+      throw new Error('Invalid encrypted session key length');
+    }
+
     try {
-      const decryptedSessionKeyWithSignature = crypto.privateDecrypt(
+      const decryptedData = crypto.privateDecrypt(
         {
           key: this.config.key,
           padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
         },
         Buffer.from(encryptedSessionKey, 'base64')
       ).toString('utf-8');
-  
-      if (!decryptedSessionKeyWithSignature.endsWith(signature)) {
-        throw new Error('Failed to validate session key');
+    
+      const parts = decryptedData.split(':');
+      if (parts.length !== 2) {
+        throw new Error('Invalid decrypted session key format');
       }
-  
-      // Extract and return only the session key (without the signature)
-      return decryptedSessionKeyWithSignature.replace(signature, '');
+    
+      const [sessionKey, signature] = parts;
+    
+      if (signature !== expectedSignature) {
+        throw new Error('Invalid session key signature');
+      }
+    
+      return sessionKey;
     } catch (error) {
       console.error('Error validating session key:', error);
       throw new Error('Failed to validate session key');

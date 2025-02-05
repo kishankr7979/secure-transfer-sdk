@@ -1,6 +1,5 @@
 import { SecureTransferSDK } from '../src';
 import crypto from 'crypto';
-import { log } from 'console';
 
 describe('SecureTransferSDK', () => {
   let clientSDK;
@@ -36,8 +35,8 @@ describe('SecureTransferSDK', () => {
 
   test('validateSessionKey method (server-side)', () => {
     const { encryptedSessionKey, plainSessionKey } = clientSDK.generateSessionKey(signature);
-    const validatedSessionKey = serverSDK.validateSessionKey(encryptedSessionKey, signature);
-    log({validatedSessionKey, plainSessionKey, signature})
+    let modifiedKey = encryptedSessionKey;
+    const validatedSessionKey = serverSDK.validateSessionKey(modifiedKey, signature);
     expect(validatedSessionKey).toBe(plainSessionKey);
   });
 
