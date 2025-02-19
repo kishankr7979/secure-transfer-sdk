@@ -39,7 +39,7 @@ class SecureTransferSDK {
         Buffer.from(combinedData, 'utf-8')
       ).toString('base64');
     
-      return { encryptedSessionKey, plainSessionKey: sessionKey };
+      return {  encryptedSessionKey: encryptedSessionKey + signature, plainSessionKey: sessionKey };
     } catch (error) {
       console.error('Error generating session key:', error);
       throw new Error('Failed to generate session key');
@@ -56,6 +56,10 @@ class SecureTransferSDK {
 
     if (encryptedBuffer.length !== 256) {
       throw new Error('Invalid encrypted session key length');
+    }
+
+    if(!encryptedSessionKey.endsWith(expectedSignature)) {
+      throw new Error('Invalid session key');
     }
 
     try {
